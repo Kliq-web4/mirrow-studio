@@ -1,13 +1,39 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Helmet } from "react-helmet-async";
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import StorySection from "@/components/StorySection";
+import FeaturesSection from "@/components/FeaturesSection";
+import ProductSection from "@/components/ProductSection";
+import CommunitySection from "@/components/CommunitySection";
+import NewsletterSection from "@/components/NewsletterSection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <>
+      <Helmet>
+        <title>MIRROW World | Studio-Grade LED Mirror for Creators</title>
+        <meta 
+          name="description" 
+          content="Step into MIRROW World. Studio-grade LED lighting meets elegant design. Tap-to-change lighting moods, creator-ready phone clip, and 30+ routines per charge." 
+        />
+        <meta name="keywords" content="LED mirror, makeup mirror, vanity mirror, ring light, content creator, beauty mirror, MIRROW" />
+        <link rel="canonical" href="https://mirrowworld.com" />
+      </Helmet>
+      
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <main>
+          <HeroSection />
+          <StorySection />
+          <FeaturesSection />
+          <ProductSection />
+          <CommunitySection />
+          <NewsletterSection />
+        </main>
+        <Footer />
       </div>
-    </div>
+    </>
   );
 };
 
