@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CartDrawer } from "./CartDrawer";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,16 +60,7 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative text-foreground hover:text-primary"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
-                0
-              </span>
-            </Button>
+            <CartDrawer />
 
             {/* Mobile menu toggle */}
             <Button
