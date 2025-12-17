@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FormattedDescription from "@/components/FormattedDescription";
 import { ArrowLeft, Loader2, Minus, Plus, ShoppingCart, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
@@ -195,9 +196,10 @@ export default function ProductDetail() {
                 </p>
               </div>
               
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                {product.description || "Transform your daily ritual with the MIRROW premium LED mirror. Featuring touch-sensitive controls, multiple lighting modes, and a detachable phone holder for content creators."}
-              </p>
+              <FormattedDescription 
+                description={product.description || "Transform your daily ritual with the MIRROW premium LED mirror. Featuring touch-sensitive controls, multiple lighting modes, and a detachable phone holder for content creators."}
+                title={product.title}
+              />
               
               {/* Variants */}
               {product.options.length > 0 && product.options[0].name !== 'Title' && (
