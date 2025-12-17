@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShopifyProduct } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
+import { getShortDescription } from "@/lib/formatProductDescription";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -77,7 +78,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             {node.title}
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-2 mt-1 min-h-[2.5rem]">
-            {node.description || "Premium LED mirror for your daily ritual"}
+            {getShortDescription(node.description, node.title) || "Premium LED mirror for your daily ritual"}
           </p>
           <p className="mt-3 text-xl font-semibold text-primary">
             {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
