@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
+import { fetchWhopProducts as fetchProducts } from "@/lib/whop";
+import { ShopifyProduct } from "@/lib/shopify";
 import { ProductCard } from "./ProductCard";
 import { Loader2 } from "lucide-react";
 

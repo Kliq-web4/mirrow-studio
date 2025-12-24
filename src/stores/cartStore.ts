@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { CartItem, createStorefrontCheckout } from '@/lib/shopify';
+import { CartItem } from '@/lib/shopify';
+import { createWhopCheckout } from '@/lib/whop';
 
 interface CartStore {
   items: CartItem[];
@@ -78,7 +79,7 @@ export const useCartStore = create<CartStore>()(
 
         setLoading(true);
         try {
-          const checkoutUrl = await createStorefrontCheckout(items);
+          const checkoutUrl = await createWhopCheckout(items);
           setCheckoutUrl(checkoutUrl);
           return checkoutUrl;
         } catch (error) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchProductByHandle } from "@/lib/shopify";
+import { fetchWhopProductByHandle as fetchProductByHandle } from "@/lib/whop";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
