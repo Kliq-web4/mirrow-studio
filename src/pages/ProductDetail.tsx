@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchWhopProductByHandle as fetchProductByHandle } from "@/lib/whop";
+import { fetchProductByHandle } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -34,6 +34,9 @@ interface ProductNode {
       node: {
         id: string;
         title: string;
+        metafield?: {
+           value: string;
+        };
         price: {
           amount: string;
           currencyCode: string;
@@ -88,6 +91,7 @@ export default function ProductDetail() {
       product: { node: product },
       variantId: selectedVariant.id,
       variantTitle: selectedVariant.title,
+      whopPlanId: selectedVariant.metafield?.value,
       price: selectedVariant.price,
       quantity,
       selectedOptions: selectedVariant.selectedOptions || []
@@ -128,8 +132,8 @@ export default function ProductDetail() {
   return (
     <>
       <Helmet>
-        <title>{product.title} | MIRROW</title>
-        <meta name="description" content={product.description || `Shop ${product.title} - Premium LED mirror for your daily ritual.`} />
+        <title>{product?.title || 'Product'} | MIRROW</title>
+        <meta name="description" content={product?.description || `Shop ${product?.title || 'our products'} - Premium LED mirror for your daily ritual.`} />
       </Helmet>
       
       <div className="min-h-screen bg-background">

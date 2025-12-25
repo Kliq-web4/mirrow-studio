@@ -13,10 +13,10 @@ export const whop = new Whop({
 
 // Adapter to convert Whop Product to existing UI interface
 const mapWhopToShopify = (whopProduct: any): ShopifyProduct => {
-  // Use the first pricing option found, or default to 0
-  const price = whopProduct.plans?.[0]?.price || 0;
-  const currency = whopProduct.plans?.[0]?.currency?.toUpperCase() || 'USD';
-  const imageUrl = whopProduct.image_url || 'https://placehold.co/600x600?text=No+Image';
+  // Use the first pricing option found, or check top-level price fields
+  const price = whopProduct.plans?.[0]?.price || whopProduct.price || whopProduct.initial_price || 0;
+  const currency = whopProduct.plans?.[0]?.currency?.toUpperCase() || whopProduct.currency || 'USD';
+  const imageUrl = whopProduct.image_url || whopProduct.images?.[0] || 'https://placehold.co/600x600?text=No+Image';
   const variantId = whopProduct.plans?.[0]?.id || whopProduct.id;
 
   return {
@@ -68,15 +68,14 @@ export const fetchWhopProducts = async (limit = 10): Promise<ShopifyProduct[]> =
     // Fetch products
     const response = await whop.products.list({ 
       company_id: WHOP_COMPANY_ID,
-      limit,
+      // limit, // 'limit' is not a valid property in ProductListParams
     });
     
     // Check if 'data' is the array or if it's paginated
     // SDK typically returns { data: [...] } or just [...] depending on version.
     // We assume 'data' property exists.
     const products = (response as any).data || [];
-
-    return products.map(mapWhopToShopify);
+    return products.map((p: any) => mapWhopToShopify(p));
 
   } catch (error) {
     console.error("Failed to fetch Whop products:", error);
@@ -104,27 +103,17 @@ export const createWhopCheckout = async (items: any[]): Promise<string> => {
      
      // Whop limitation: Single plan checkout usually.
      // We will take the first item's Variant ID (which we mapped to Plan ID)
-     const targetPlanId = items[0].variantId;
-     
-     // Optionally check for quantity or creating a bundle on the fly?
+     // Whop limitation: Single plan checkout usually.
+     // We will take the first item's Variant ID (which we mapped to Plan ID)
      // For now, simple redirect to buy the plan.
      
-     const response = await whop.checkouts.create({
-        line_items: items.map(item => ({
-             plan_id: item.variantId,
-             quantity: item.quantity
-        })),
-        redirect_url: `${window.location.origin}/order-confirmation`
-     });
-
-     if ((response as any).url) {
-        return (response as any).url;
-     }
+     // Construct Whop Checkout URL
+     // We prefer the whopPlanId stored in metafields.
+     // If not present, we fallback to variantId (which might be wrong if not synced).
+     const targetPlanId = items[0].whopPlanId || items[0].variantId;
+     const checkoutUrl = `https://whop.com/checkout/${targetPlanId}?quantity=${items[0].quantity}`;
      
-     // If SDK returns differently
-     if ((response as any).data?.url) return (response as any).data.url;
-
-     throw new Error("No checkout URL returned");
+     return checkoutUrl;
    } catch (error) {
       console.error("Whop Checkout Error:", error);
       throw error;

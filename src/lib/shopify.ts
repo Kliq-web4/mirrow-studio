@@ -32,6 +32,9 @@ export interface ShopifyProduct {
         node: {
           id: string;
           title: string;
+          metafield?: {
+             value: string;
+          };
           price: {
             amount: string;
             currencyCode: string;
@@ -128,6 +131,9 @@ export const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
           node {
             id
             title
+            metafield(namespace: "custom", key: "whop_plan_id") {
+              value
+            }
             price {
               amount
               currencyCode
@@ -245,6 +251,7 @@ export interface CartItem {
   product: ShopifyProduct;
   variantId: string;
   variantTitle: string;
+  whopPlanId?: string;
   price: {
     amount: string;
     currencyCode: string;
