@@ -5,10 +5,27 @@ import { getShortDescription } from "@/lib/formatProductDescription";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { UrgencyBadge } from "@/components/UrgencyBadge";
+import { useMemo } from "react";
 
 interface ProductCardProps {
   product: ShopifyProduct;
 }
+
+// Pseudo-random urgency based on product handle for consistency
+const getUrgencyType = (handle: string): "low-stock" | "trending" | "hot" | null => {
+  const hash = handle.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+  const mod = hash % 5;
+  if (mod === 0) return "trending";
+  if (mod === 1) return "hot";
+  if (mod === 2) return "low-stock";
+  return null;
+};
+
+const getStockCount = (handle: string): number => {
+  const hash = handle.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+  return 3 + (hash % 8);
+};
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore(state => state.addItem);
@@ -17,6 +34,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const mainImage = node.images.edges[0]?.node;
   const price = node.priceRange.minVariantPrice;
   const firstVariant = node.variants.edges[0]?.node;
+
+  const urgencyType = useMemo(() => getUrgencyType(node.handle), [node.handle]);
+  const stockCount = useMemo(() => getStockCount(node.handle), [node.handle]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,6 +65,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       className="group block"
     >
       <div className="relative overflow-hidden rounded-xl bg-card border border-border transition-all duration-500 hover:border-primary/50 hover:shadow-glow">
+        {/* Urgency badge */}
+        {urgencyType && (
+          <div className="absolute top-3 left-3 z-10">
+            <UrgencyBadge 
+              type={urgencyType} 
+              value={urgencyType === "low-stock" ? stockCount : undefined}
+            />
+          </div>
+        )}
+
         {/* Image */}
         <div className="aspect-square overflow-hidden bg-muted">
           {mainImage ? (
