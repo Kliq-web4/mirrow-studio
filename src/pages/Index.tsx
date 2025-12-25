@@ -7,6 +7,9 @@ import ProductSection from "@/components/ProductSection";
 import CommunitySection from "@/components/CommunitySection";
 import NewsletterSection from "@/components/NewsletterSection";
 import Footer from "@/components/Footer";
+import TrustSignals from "@/components/TrustSignals";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
+import SocialProofNotification from "@/components/SocialProofNotification";
 
 const Index = () => {
   return (
@@ -32,6 +35,11 @@ const Index = () => {
           <NewsletterSection />
         </main>
         <Footer />
+        
+        {/* Conversion Optimization Components */}
+        <TrustSignals />
+        <ExitIntentPopup />
+        <SocialProofNotification />
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fetchProductByHandle } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FormattedDescription from "@/components/FormattedDescription";
-import { ArrowLeft, Loader2, Minus, Plus, ShoppingCart, Check } from "lucide-react";
+import { VisitorCounter, StockProgress, UrgencyBadge } from "@/components/UrgencyBadge";
+import TrustSignals from "@/components/TrustSignals";
+import { ArrowLeft, Loader2, Minus, Plus, ShoppingCart, Check, Truck, Shield, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
@@ -191,6 +193,12 @@ export default function ProductDetail() {
             
             {/* Product info */}
             <div className="space-y-6">
+              {/* Urgency badges */}
+              <div className="flex flex-wrap items-center gap-2">
+                <UrgencyBadge type="trending" />
+                <UrgencyBadge type="limited-time" value="Holiday Sale" />
+              </div>
+
               <div>
                 <h1 className="font-display text-4xl lg:text-5xl text-foreground mb-4">
                   {product.title}
@@ -199,6 +207,12 @@ export default function ProductDetail() {
                   {selectedVariant?.price.currencyCode || 'USD'} {parseFloat(selectedVariant?.price.amount || '0').toFixed(2)}
                 </p>
               </div>
+
+              {/* Visitor counter */}
+              <VisitorCounter count={8 + Math.floor(Math.random() * 15)} />
+
+              {/* Stock indicator */}
+              <StockProgress remaining={5 + Math.floor(Math.random() * 10)} total={25} />
               
               <FormattedDescription 
                 description={product.description || "Transform your daily ritual with the MIRROW premium LED mirror. Featuring touch-sensitive controls, multiple lighting modes, and a detachable phone holder for content creators."}
@@ -283,23 +297,32 @@ export default function ProductDetail() {
               </Button>
               
               {/* Trust badges */}
-              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-border">
-                <div className="flex items-center gap-3">
+              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
+                <div className="flex flex-col items-center text-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Check className="w-5 h-5 text-primary" />
+                    <Truck className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-foreground">Free Shipping</p>
-                    <p className="text-xs text-muted-foreground">On all orders</p>
+                    <p className="text-xs font-medium text-foreground">Free Shipping</p>
+                    <p className="text-[10px] text-muted-foreground">Worldwide</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col items-center text-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Check className="w-5 h-5 text-primary" />
+                    <Shield className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-foreground">30-Day Guarantee</p>
-                    <p className="text-xs text-muted-foreground">Money back</p>
+                    <p className="text-xs font-medium text-foreground">Secure Checkout</p>
+                    <p className="text-[10px] text-muted-foreground">SSL Encrypted</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <RotateCcw className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-foreground">30-Day Returns</p>
+                    <p className="text-[10px] text-muted-foreground">Money Back</p>
                   </div>
                 </div>
               </div>
@@ -308,6 +331,7 @@ export default function ProductDetail() {
         </main>
         
         <Footer />
+        <TrustSignals />
       </div>
     </>
   );
