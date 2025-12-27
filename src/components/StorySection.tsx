@@ -1,5 +1,8 @@
-import { Sparkles, Sun, Moon, Check } from "lucide-react";
+import { Sparkles, Sun, Moon, Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 
 const moods = [
   {
@@ -30,9 +33,49 @@ const benefits = [
 ];
 
 const StorySection = () => {
-  const scrollToProducts = () => {
-    document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navigate = useNavigate();
+  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Fetch products on mount
+  useEffect(() => {
+    const loadProducts = async () => {
+      const fetchedProducts = await fetchProducts(10);
+      if (fetchedProducts.length > 0) {
+        // Shuffle products randomly
+        const shuffled = [...fetchedProducts].sort(() => Math.random() - 0.5);
+        setProducts(shuffled);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  // Cycle through products every 4 seconds
+  useEffect(() => {
+    if (products.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentProductIndex((prev) => (prev + 1) % products.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [products.length]);
+
+  const currentProduct = products[currentProductIndex];
+  const currentImage = currentProduct?.node?.images?.edges?.[0]?.node?.url;
+
+  const handleGetMirrow = useCallback(() => {
+    if (currentProduct?.node?.handle) {
+      navigate(`/product/${currentProduct.node.handle}`);
+    } else {
+      document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [currentProduct, navigate]);
 
   return (
     <section id="story" className="relative py-32 overflow-hidden">
@@ -91,19 +134,52 @@ const StorySection = () => {
               <Button 
                 size="lg" 
                 className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg font-medium glow-border transition-all duration-300 hover:scale-105"
-                onClick={scrollToProducts}
+                onClick={handleGetMirrow}
               >
                 Get Your MIRROW
               </Button>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <div className="w-32 h-40 rounded-full border-4 border-primary/50 shadow-glow animate-glow-pulse" />
+              <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
+                {currentImage ? (
+                  <img 
+                    src={currentImage} 
+                    alt={currentProduct?.node?.title || "Product"} 
+                    className={`w-full h-full object-cover transition-all duration-300 ${
+                      isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100"
+                    }`}
+                  />
+                ) : (
+                  <div className="w-32 h-40 rounded-full border-4 border-primary/50 shadow-glow animate-glow-pulse" />
+                )}
               </div>
               {/* Floating badge */}
-              <div className="absolute -bottom-4 -right-4 glass-card px-4 py-2">
-                <p className="text-sm font-medium text-foreground">⚡ Instant mood switch</p>
+              <div className="absolute -bottom-4 -right-4 glass-card px-4 py-2 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-primary" />
+                <p className="text-sm font-medium text-foreground">Instant mood switch</p>
               </div>
+              {/* Product indicator dots */}
+              {products.length > 1 && (
+                <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex gap-2">
+                  {products.slice(0, 5).map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setIsTransitioning(true);
+                        setTimeout(() => {
+                          setCurrentProductIndex(idx);
+                          setIsTransitioning(false);
+                        }, 300);
+                      }}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        idx === currentProductIndex 
+                          ? "bg-primary scale-125" 
+                          : "bg-muted-foreground/40 hover:bg-muted-foreground/60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
