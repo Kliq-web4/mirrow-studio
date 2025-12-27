@@ -1,9 +1,7 @@
 import { ShopifyProducts } from "./ShopifyProducts";
-import { Shield, Truck, RotateCcw } from "lucide-react";
-
+import { Shield, RotateCcw } from "lucide-react";
 const ProductSection = () => {
-  return (
-    <section id="products" className="relative py-32 overflow-hidden">
+  return <section id="products" className="relative py-32 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-primary/5 blur-[150px]" />
       
@@ -21,20 +19,7 @@ const ProductSection = () => {
           </p>
           
           {/* Trust badges */}
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Truck className="w-4 h-4 text-primary" />
-              <span>Free Shipping</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Shield className="w-4 h-4 text-primary" />
-              <span>2-Year Warranty</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <RotateCcw className="w-4 h-4 text-primary" />
-              <span>30-Day Returns</span>
-            </div>
-          </div>
+          
         </div>
 
         {/* Products grid */}
@@ -47,8 +32,6 @@ const ProductSection = () => {
           </p>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ProductSection;

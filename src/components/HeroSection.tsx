@@ -51,7 +51,7 @@ const HeroSection = () => {
         animationDelay: "0.25s"
       }}>
           <span className="text-sm text-muted-foreground px-3 py-1 rounded-full border border-border/50">✨ Tap-to-change moods</span>
-          <span className="text-sm text-muted-foreground px-3 py-1 rounded-full border border-border/50">📱 Creator phone clip</span>
+          <span className="text-sm text-muted-foreground px-3 py-1 rounded-full border border-border/50">📱 Creators Favorites</span>
           <span className="text-sm text-muted-foreground px-3 py-1 rounded-full border border-border/50">🔋 30+ routines/charge</span>
         </div>
 
