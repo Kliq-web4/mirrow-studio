@@ -42,6 +42,11 @@
     --surface-glass: 0 0% 100% / 0.03;
     --surface-glass-hover: 0 0% 100% / 0.06;
 
+    /* Folder tokens */
+    --folder-back: 45 50% 35%;
+    --folder-front: 45 55% 45%;
+    --folder-tab: 45 45% 30%;
+
     --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 45 10% 95%;
     --sidebar-primary: 45 60% 70%;
