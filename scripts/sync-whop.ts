@@ -112,8 +112,7 @@ async function syncShopifyToWhop() {
                 description: `Variant: ${variant.title}`.substring(0, 1000),
                 currency: variant.price.currencyCode.toLowerCase() as any,
                 initial_price: parseFloat(variant.price.amount),
-                billing_period: 365,
-                renewal_price: parseFloat(variant.price.amount),
+                plan_type: 'one_time',
                 stock: 9999,
                 unlimited_stock: true
             } as any);

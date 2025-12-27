@@ -111,6 +111,12 @@ export const createWhopCheckout = async (items: any[]): Promise<string> => {
      // We prefer the whopPlanId stored in metafields.
      // If not present, we fallback to variantId (which might be wrong if not synced).
      const targetPlanId = items[0].whopPlanId || items[0].variantId;
+     
+     console.log('--- CHECKOUT DEBUG ---');
+     console.log('Item Metafield (WhopPlanID):', items[0].whopPlanId);
+     console.log('Item VariantID:', items[0].variantId);
+     console.log('Resolved Target Plan ID:', targetPlanId);
+     
      const checkoutUrl = `https://whop.com/checkout/${targetPlanId}?quantity=${items[0].quantity}`;
      
      return checkoutUrl;
