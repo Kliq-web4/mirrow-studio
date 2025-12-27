@@ -27,10 +27,11 @@ const Index = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <main>
+          {/* Optimized conversion flow: Hook → Desire → Features → Products → Social Proof → Capture */}
           <HeroSection />
+          <ProductSection />
           <StorySection />
           <FeaturesSection />
-          <ProductSection />
           <CommunitySection />
           <NewsletterSection />
         </main>

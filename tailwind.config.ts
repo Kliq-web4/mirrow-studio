@@ -55,6 +55,11 @@ export default {
           DEFAULT: "hsl(var(--glow-primary))",
           soft: "hsl(var(--glow-soft))",
         },
+        folder: {
+          back: "hsl(var(--folder-back))",
+          front: "hsl(var(--folder-front))",
+          tab: "hsl(var(--folder-tab))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
