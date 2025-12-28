@@ -63,20 +63,7 @@ const HeroSection = () => {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up" style={{
-        animationDelay: "0.4s"
-      }}>
-          <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg font-medium glow-border transition-all duration-300 hover:scale-105 group" onClick={scrollToProducts}>
-            Shop Now — Free Shipping
-            <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-          </Button>
-          <Button variant="outline" size="lg" className="border-border/50 text-foreground hover:bg-secondary/50 px-8 py-6 text-lg font-medium backdrop-blur-sm group" onClick={() => document.getElementById("story")?.scrollIntoView({
-          behavior: "smooth"
-        })}>
-            <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-            See It in Action
-          </Button>
-        </div>
+        
 
         {/* Urgency */}
         <p className="text-sm text-primary/80 mt-6 animate-fade-up" style={{
