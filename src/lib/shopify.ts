@@ -83,6 +83,9 @@ export const STOREFRONT_PRODUCTS_QUERY = `
               node {
                 id
                 title
+                metafield(namespace: "custom", key: "whop_plan_id") {
+                  value
+                }
                 price {
                   amount
                   currencyCode

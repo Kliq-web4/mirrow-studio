@@ -8,7 +8,10 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync-whop": "tsx scripts/sync-whop.ts",
+    "update-metafields": "tsx scripts/update-shopify-metafields.ts",
+    "inspect-plan": "tsx scripts/inspect-plan.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -50,7 +50,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       variantTitle: firstVariant.title,
       price: firstVariant.price,
       quantity: 1,
-      selectedOptions: firstVariant.selectedOptions || []
+      selectedOptions: firstVariant.selectedOptions || [],
+      whopPlanId: firstVariant.metafield?.value
     });
     
     toast.success("Added to cart", {
