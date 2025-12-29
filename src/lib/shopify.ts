@@ -295,3 +295,30 @@ export async function createStorefrontCheckout(items: CartItem[]): Promise<strin
   url.searchParams.set('channel', 'online_store');
   return url.toString();
 }
+
+// Create direct checkout for a single product
+export async function createDirectCheckout(variantId: string, quantity: number = 1): Promise<string> {
+  const cartData = await storefrontApiRequest(CART_CREATE_MUTATION, {
+    input: { 
+      lines: [{ quantity, merchandiseId: variantId }] 
+    },
+  });
+
+  if (!cartData) {
+    throw new Error('Failed to create checkout');
+  }
+
+  if (cartData.data.cartCreate.userErrors.length > 0) {
+    throw new Error(`Cart creation failed: ${cartData.data.cartCreate.userErrors.map((e: { message: string }) => e.message).join(', ')}`);
+  }
+
+  const cart = cartData.data.cartCreate.cart;
+  
+  if (!cart.checkoutUrl) {
+    throw new Error('No checkout URL returned from Shopify');
+  }
+
+  const url = new URL(cart.checkoutUrl);
+  url.searchParams.set('channel', 'online_store');
+  return url.toString();
+}

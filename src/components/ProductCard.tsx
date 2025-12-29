@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import { ShopifyProduct } from "@/lib/shopify";
-import { useCartStore } from "@/stores/cartStore";
+import { ShopifyProduct, createDirectCheckout } from "@/lib/shopify";
 import { getShortDescription } from "@/lib/formatProductDescription";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus } from "lucide-react";
+import { ShoppingCart, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { UrgencyBadge } from "@/components/UrgencyBadge";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 interface ProductCardProps {
   product: ShopifyProduct;
@@ -28,7 +27,7 @@ const getStockCount = (handle: string): number => {
 };
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const addItem = useCartStore(state => state.addItem);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { node } = product;
   
   const mainImage = node.images.edges[0]?.node;
@@ -38,26 +37,25 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const urgencyType = useMemo(() => getUrgencyType(node.handle), [node.handle]);
   const stockCount = useMemo(() => getStockCount(node.handle), [node.handle]);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleBuyNow = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (!firstVariant) return;
+    if (!firstVariant || isCheckingOut) return;
     
-    addItem({
-      product,
-      variantId: firstVariant.id,
-      variantTitle: firstVariant.title,
-      price: firstVariant.price,
-      quantity: 1,
-      selectedOptions: firstVariant.selectedOptions || [],
-      whopPlanId: firstVariant.metafield?.value
-    });
-    
-    toast.success("Added to cart", {
-      description: node.title,
-      position: "top-center"
-    });
+    setIsCheckingOut(true);
+    try {
+      const checkoutUrl = await createDirectCheckout(firstVariant.id);
+      window.open(checkoutUrl, '_blank');
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      toast.error("Checkout failed", {
+        description: "Please try again",
+        position: "top-center"
+      });
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (
@@ -94,13 +92,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         {/* Overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        {/* Quick add button */}
+        {/* Buy now button */}
         <Button
-          onClick={handleAddToCart}
+          onClick={handleBuyNow}
+          disabled={isCheckingOut}
           size="icon"
           className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 bg-primary hover:bg-primary/90 text-primary-foreground shadow-elegant"
         >
-          <Plus className="w-4 h-4" />
+          {isCheckingOut ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <ExternalLink className="w-4 h-4" />
+          )}
         </Button>
         
         {/* Content */}
