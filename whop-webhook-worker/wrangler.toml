@@ -1,0 +1,10 @@
+name = "mirrow-whop-webhook"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+SHOPIFY_STORE_DOMAIN = "aa8x11-j0.myshopify.com"
+SHOPIFY_API_VERSION = "2025-01"
+
+# Secrets like SHOPIFY_ADMIN_TOKEN should be set via: 
+# wrangler secret put SHOPIFY_ADMIN_TOKEN
