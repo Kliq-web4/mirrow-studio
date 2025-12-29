@@ -1,14 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchProductByHandle } from "@/lib/shopify";
-import { useCartStore } from "@/stores/cartStore";
+import { fetchProductByHandle, createDirectCheckout } from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FormattedDescription from "@/components/FormattedDescription";
 import { VisitorCounter, StockProgress, UrgencyBadge } from "@/components/UrgencyBadge";
 import TrustSignals from "@/components/TrustSignals";
-import { ArrowLeft, Loader2, Minus, Plus, ShoppingCart, Check, Truck, Shield, RotateCcw } from "lucide-react";
+import { ArrowLeft, Loader2, Minus, Plus, ShoppingCart, ExternalLink, Truck, Shield, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
@@ -61,10 +60,10 @@ export default function ProductDetail() {
   const { handle } = useParams<{ handle: string }>();
   const [product, setProduct] = useState<ProductNode | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<ProductNode['variants']['edges'][0]['node'] | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const addItem = useCartStore(state => state.addItem);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -86,23 +85,22 @@ export default function ProductDetail() {
     loadProduct();
   }, [handle]);
 
-  const handleAddToCart = () => {
-    if (!product || !selectedVariant) return;
+  const handleBuyNow = async () => {
+    if (!product || !selectedVariant || isCheckingOut) return;
     
-    addItem({
-      product: { node: product },
-      variantId: selectedVariant.id,
-      variantTitle: selectedVariant.title,
-      whopPlanId: selectedVariant.metafield?.value,
-      price: selectedVariant.price,
-      quantity,
-      selectedOptions: selectedVariant.selectedOptions || []
-    });
-    
-    toast.success("Added to cart", {
-      description: `${quantity}x ${product.title}`,
-      position: "top-center"
-    });
+    setIsCheckingOut(true);
+    try {
+      const checkoutUrl = await createDirectCheckout(selectedVariant.id, quantity);
+      window.open(checkoutUrl, '_blank');
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      toast.error("Checkout failed", {
+        description: "Please try again",
+        position: "top-center"
+      });
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   if (loading) {
@@ -285,15 +283,19 @@ export default function ProductDetail() {
                 </div>
               </div>
               
-              {/* Add to cart */}
+              {/* Buy now */}
               <Button
-                onClick={handleAddToCart}
+                onClick={handleBuyNow}
                 size="lg"
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6"
-                disabled={!selectedVariant?.availableForSale}
+                disabled={!selectedVariant?.availableForSale || isCheckingOut}
               >
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                {selectedVariant?.availableForSale ? 'Add to Cart' : 'Out of Stock'}
+                {isCheckingOut ? (
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                ) : (
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                )}
+                {isCheckingOut ? 'Creating Checkout...' : selectedVariant?.availableForSale ? 'Buy Now' : 'Out of Stock'}
               </Button>
               
               {/* Trust badges */}
