@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 import Whop from '@whop/sdk';
 import nodeFetch from 'node-fetch';
 
+// Polyfill fetch
 if (!globalThis.fetch) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     globalThis.fetch = nodeFetch as any;
 }
 
@@ -53,7 +55,7 @@ async function fixWhopPlan(planId: string) {
             console.log(`✅ Successfully updated ${planId} to one-time.`);
         }
 
-    } catch (e) {
+    } catch (e: unknown) {
         console.error(`Error fixing ${planId}:`, e);
     }
 }

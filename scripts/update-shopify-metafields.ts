@@ -2,33 +2,40 @@
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import nodeFetch from 'node-fetch';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import fetch from 'node-fetch';
 
 // Polyfill fetch
+// Polyfill fetch
 if (!globalThis.fetch) {
-    globalThis.fetch = nodeFetch as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    globalThis.fetch = fetch as any;
 }
 
 dotenv.config();
 
 // Configuration
-const SHOPIFY_STORE_DOMAIN = 'aa8x11-j0.myshopify.com'; // From your shopify.ts
-const SHOPIFY_ADMIN_API_VERSION = '2025-01'; // Recent stable version
+// You can move these to .env if preferred
+const SHOPIFY_STORE_DOMAIN = 'aa8x11-j0.myshopify.com'; 
+const SHOPIFY_ADMIN_API_VERSION = '2025-01'; 
 const SHOPIFY_ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
 
+// Validation
 if (!SHOPIFY_ADMIN_TOKEN) {
     console.error("❌ Error: Missing SHOPIFY_ADMIN_TOKEN environment variable.");
-    console.error("Please run with: Set-Item -Path Env:SHOPIFY_ADMIN_TOKEN -Value 'shpat_...'; npx tsx scripts/update-shopify-metafields.ts");
+    console.error("Please ensure you have set SHOPIFY_ADMIN_TOKEN in your .env file or session.");
     process.exit(1);
 }
 
-    const SYNC_FILE_PATH = path.join(process.cwd(), 'whop_sync_v3.txt');
+const MAPPING_FILE_PATH = path.join(process.cwd(), 'whop_mapping.json');
 
-async function updateShopifyMetafield(variantId: string, whopPlanId: string) {
-    // Determine the Global ID format (GraphQL Admin API requires gid://shopify/ProductVariant/...)
-    // The sync file has full GIDs, so we should be good.
-    
-    // Mutation to set metafield
+async function updateMetafield(item: { variantId: string, whopPlanId: string, title: string }) {
+    const { variantId, whopPlanId, title } = item;
+
+    console.log(`Processing: ${title}`);
+    console.log(`  Target: ${variantId} -> ${whopPlanId}`);
+
     const query = `
         mutation metafieldsSet($metafields: [MetafieldsSetInput!]!) {
             metafieldsSet(metafields: $metafields) {
@@ -62,61 +69,63 @@ async function updateShopifyMetafield(variantId: string, whopPlanId: string) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Shopify-Access-Token': SHOPIFY_ADMIN_TOKEN
+                'X-Shopify-Access-Token': SHOPIFY_ADMIN_TOKEN!
             },
             body: JSON.stringify({ query, variables })
         });
 
-        const data: any = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: any = await response.json();
 
-        if (data.errors) {
-            console.error(`❌ API Error for ${variantId}:`, JSON.stringify(data.errors, null, 2));
+        if (result.errors) {
+            console.error(`  ❌ GraphQL Error:`, JSON.stringify(result.errors, null, 2));
             return false;
         }
 
-        if (data.data?.metafieldsSet?.userErrors?.length > 0) {
-            console.error(`⚠️ Update Failed for ${variantId}:`, JSON.stringify(data.data.metafieldsSet.userErrors, null, 2));
+        const userErrors = result.data?.metafieldsSet?.userErrors;
+        if (userErrors && userErrors.length > 0) {
+            console.error(`  ⚠️ User Error:`, JSON.stringify(userErrors, null, 2));
             return false;
         }
 
-        console.log(`✅ Success: Linked ${variantId} -> ${whopPlanId}`);
+        console.log(`  ✅ Success`);
         return true;
 
     } catch (error) {
-        console.error(`❌ Network/Script Error for ${variantId}:`, error);
+        console.error(`  ❌ Network Error:`, error);
         return false;
     }
 }
 
 async function main() {
-    console.log("📂 Reading sync file:", SYNC_FILE_PATH);
-    
-    if (!fs.existsSync(SYNC_FILE_PATH)) {
-        console.error("Sync file not found. Please run the sync-whop script first.");
+    if (!fs.existsSync(MAPPING_FILE_PATH)) {
+        console.error(`❌ Mapping file not found: ${MAPPING_FILE_PATH}`);
+        console.error(`Please run 'npm run sync-whop' first to generate this file.`);
         return;
     }
 
-    const content = fs.readFileSync(SYNC_FILE_PATH, 'utf16le');
-    const matches = content.matchAll(/MATCH: Shopify Variant \((gid:\/\/shopify\/ProductVariant\/\d+)\) -> Whop Plan \((plan_[a-zA-Z0-9]+)\)/g);
+    const rawData = fs.readFileSync(MAPPING_FILE_PATH, 'utf-8');
+    let mappings = [];
     
-    let count = 0;
-    const updates = [];
-
-    for (const match of matches) {
-        const variantId = match[1];
-        const whopPlanId = match[2];
-        updates.push({ variantId, whopPlanId });
+    try {
+        mappings = JSON.parse(rawData);
+    } catch (e) {
+        console.error(`❌ Failed to parse JSON mapping file.`);
+        return;
     }
 
-    console.log(`🔍 Found ${updates.length} variants to update.`);
+    console.log(`\n🚀 Starting Bulk Metafield Update for ${mappings.length} variants...\n`);
 
-    for (const item of updates) {
-        await updateShopifyMetafield(item.variantId, item.whopPlanId);
-        // Small delay to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 200)); 
+    let successCount = 0;
+    
+    for (const item of mappings) {
+        const success = await updateMetafield(item);
+        if (success) successCount++;
+        // Small delay to be kind to API rate limits
+        await new Promise(r => setTimeout(r, 200)); 
     }
 
-    console.log("🎉 Done! All variants processed.");
+    console.log(`\n🎉 Complete! Successfully updated ${successCount}/${mappings.length} items.\n`);
 }
 
 main();

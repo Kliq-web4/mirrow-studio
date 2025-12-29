@@ -232,7 +232,7 @@ function extractFeatures(text: string): string[] {
  */
 function generateCleanDescription(text: string, title: string): string {
   // Remove all spec-like content
-  let cleaned = text
+  const cleaned = text
     // Remove spec patterns
     .replace(/\b(product\s*information|specifications?|dimensions?)[:\s]*[^.!?]*/gi, '')
     .replace(/\b(material|color|colour|style|type|weight|power|voltage|frame|metal|suitable)[:\-–—]\s*[^.!?]*/gi, '')
@@ -300,7 +300,7 @@ export function formatProductDescription(rawDescription: string, title: string =
  */
 export function getShortDescription(rawDescription: string, title: string = '', maxLength: number = 100): string {
   const formatted = formatProductDescription(rawDescription, title);
-  let desc = formatted.cleanDescription.replace(/[\[\]{}]/g, '').trim();
+  const desc = formatted.cleanDescription.replace(/[\[\]{}]/g, '').trim();
   
   if (desc.length <= maxLength) return desc;
   

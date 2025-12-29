@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import nodeFetch from 'node-fetch';
 
 if (!globalThis.fetch) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     globalThis.fetch = nodeFetch as any;
 }
 
@@ -31,12 +32,12 @@ async function verify() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': SHOPIFY_ADMIN_TOKEN
+            'X-Shopify-Access-Token': SHOPIFY_ADMIN_TOKEN!
         },
         body: JSON.stringify({ query })
     });
 
-    const data: any = await response.json();
+    const data = await response.json();
     console.log(JSON.stringify(data, null, 2));
 }
 

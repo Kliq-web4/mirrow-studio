@@ -1,10 +1,12 @@
 import http from 'http';
 import dotenv from 'dotenv';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import nodeFetch from 'node-fetch';
 
 // Polyfill fetch
 if (!globalThis.fetch) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     globalThis.fetch = nodeFetch as any;
 }
 
@@ -55,51 +57,72 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-async function handleCheckoutCompleted(payload: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handleCheckoutCompleted(session: any) {
     console.log('Processing Checkout Completion...');
     
     // Extract Metadata
-    const session = payload.data || payload; // Adjust based on actual payload structure
     const metadata = session.metadata || {};
-    
-    if (!metadata.variant_map) {
-        console.warn('⚠️ No variant_map found in metadata. Cannot sync to Shopify.');
-        return;
-    }
+    let shopifyLineItems: any[] = [];
 
-    let variantMap: Record<string, string>;
-    try {
-        variantMap = JSON.parse(metadata.variant_map);
-    } catch (e) {
-        console.error('Failed to parse variant_map:', e);
-        return;
-    }
+    // -- STRATEGY A: Dynamic Cart Bundle --
+    if (metadata.is_cart_bundle === 'true' && metadata.cart_content) {
+        console.log('📦 Detected Cart Bundle checkout.');
+        try {
+            const cartContent = JSON.parse(metadata.cart_content); // Array of { variantId, quantity }
+            
+            shopifyLineItems = cartContent.map((item: any) => {
+                 // Extract numeric ID from GID if present (gid://shopify/ProductVariant/12345678)
+                const numericId = item.variantId ? item.variantId.toString().split('/').pop() : '0';
+                
+                return {
+                    variant_id: parseInt(numericId || '0'),
+                    quantity: item.quantity || 1
+                };
+            });
 
-    // Extract Line Items from Whop Payload
-    // Assuming payload.line_items or session.line_items contains the products
-    const whopItems = session.line_items || session.products || [];
-    
-    const shopifyLineItems = whopItems.map((item: any) => {
-        // item.plan_id or item.id should match our map keys
-        const planId = item.plan_id || item.id; 
-        const variantId = variantMap[planId];
-        
-        if (!variantId) {
-            console.warn(`No matching Shopify Variant for Whop Plan: ${planId}`);
-            return null;
+        } catch (e) {
+            console.error('❌ Failed to parse cart_content:', e);
+            return;
         }
 
-        // Shopify Admin API expects Variant ID as a number (usually) or GID?
-        // Admin API for orders usually takes numeric ID. 
-        // Our variantId is likely "gid://shopify/ProductVariant/123456".
-        // We need to extract the numeric ID.
-        const numericId = variantId.split('/').pop();
+    } 
+    // -- STRATEGY B: Individual Plan Mapping (Legacy/Direct) --
+    else if (metadata.variant_map) {
+        console.log('🔗 Detected Direct Plan Mapping checkout.');
+        let variantMap: Record<string, string>;
+        try {
+            variantMap = JSON.parse(metadata.variant_map);
+        } catch (e) {
+            console.error('Failed to parse variant_map:', e);
+            return;
+        }
 
-        return {
-            variant_id: parseInt(numericId || '0'),
-            quantity: item.quantity || 1
-        };
-    }).filter(Boolean);
+        // Extract Line Items from Whop Payload
+        // Assuming payload.line_items or session.line_items contains the products
+        const whopItems = session.line_items || session.products || [];
+        
+        shopifyLineItems = whopItems.map((item: any) => {
+            // item.plan_id or item.id should match our map keys
+            const planId = item.plan_id || item.id; 
+            const variantId = variantMap[planId];
+            
+            if (!variantId) {
+                console.warn(`No matching Shopify Variant for Whop Plan: ${planId}`);
+                return null;
+            }
+
+            const numericId = variantId.split('/').pop();
+
+            return {
+                variant_id: parseInt(numericId || '0'),
+                quantity: item.quantity || 1
+            };
+        }).filter(Boolean);
+    } else {
+        console.warn('⚠️ No variant_map or cart_content found in metadata. Cannot sync to Shopify.');
+        return;
+    }
 
     if (shopifyLineItems.length === 0) {
         console.warn('No valid items to sync to Shopify.');
@@ -110,6 +133,7 @@ async function handleCheckoutCompleted(payload: any) {
     await createShopifyOrder(shopifyLineItems, session.customer_details?.email);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createShopifyOrder(lineItems: any[], email?: string) {
     console.log('Creating Shopify Order for items:', lineItems);
 
@@ -133,6 +157,7 @@ async function createShopifyOrder(lineItems: any[], email?: string) {
             body: JSON.stringify(orderData)
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = await response.json();
 
         if (data.errors) {

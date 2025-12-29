@@ -5,6 +5,7 @@ import nodeFetch from 'node-fetch'; // Standard fetch or use global fetch if Nod
 
 // Polyfill fetch if needed (though Node 18 has it)
 if (!globalThis.fetch) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     globalThis.fetch = nodeFetch as any;
 }
 
@@ -69,6 +70,11 @@ async function fetchShopifyProducts() {
 }
 
 
+import fs from 'fs';
+import path from 'path';
+
+// ... (existing helper function remain the same)
+
 async function syncShopifyToWhop() {
   console.log("Fetching Shopify products...");
   const products = await fetchShopifyProducts(); 
@@ -80,21 +86,21 @@ async function syncShopifyToWhop() {
 
   console.log(`Found ${products.length} products on Shopify.`);
 
+  const mappingData = [];
+
   for (const productWrapper of products) {
     const product = productWrapper.node;
     console.log(`Processing: ${product.title}`);
 
     try {
         // 1. Create Product on Whop
-        console.log(`Creating Whop Product: ${product.title}`);
-        
-        // Note: The SDK might return data in .data or directly depending on version
         const whopProductRes = await whop.products.create({
             company_id: WHOP_COMPANY_ID!,
             title: product.title.substring(0, 40),
             description: (product.description || '').substring(0, 1000),
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const whopProduct = (whopProductRes as any).data || whopProductRes;
         const whopProductId = whopProduct.id;
         
@@ -103,37 +109,43 @@ async function syncShopifyToWhop() {
         // 2. Create Plans for each Variant
         for (const variantWrapper of product.variants.edges) {
             const variant = variantWrapper.node;
-            console.log(`  > Creating Plan for Variant: ${variant.title} - ${variant.price.amount} ${variant.price.currencyCode}`);
             
             const whopPlanRes = await whop.plans.create({
                 company_id: WHOP_COMPANY_ID!,
                 product_id: whopProductId,
                 title: (variant.title === 'Default Title' ? product.title : `${product.title} - ${variant.title}`).substring(0, 30),
                 description: `Variant: ${variant.title}`.substring(0, 1000),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 currency: variant.price.currencyCode.toLowerCase() as any,
                 initial_price: parseFloat(variant.price.amount),
                 plan_type: 'one_time',
                 stock: 9999,
                 unlimited_stock: true
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
             
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const whopPlan = (whopPlanRes as any).data || whopPlanRes;
             const whopPlanId = whopPlan.id;
             
-            console.log(`    -> Created Whop Plan ID: ${whopPlanId}`);
-            console.log(`    ----------------------------------------------------------------`);
             console.log(`    MATCH: Shopify Variant (${variant.id}) -> Whop Plan (${whopPlanId})`);
-            console.log(`    ACTION: Copy '${whopPlanId}' to Shopify Metafield 'custom.whop_plan_id'`);
-            console.log(`    ----------------------------------------------------------------`);
+            
+            mappingData.push({
+                variantId: variant.id,
+                whopPlanId: whopPlanId,
+                title: variant.title === 'Default Title' ? product.title : `${product.title} - ${variant.title}`
+            });
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error(`Failed to process ${product.title}:`, JSON.stringify(error, null, 2));
-        if (error?.response?.data) {
-             console.error("API Error Data:", JSON.stringify(error.response.data, null, 2));
-        }
     }
   }
+
+  // Save to file
+  const outputPath = path.join(process.cwd(), 'whop_mapping.json');
+  fs.writeFileSync(outputPath, JSON.stringify(mappingData, null, 2));
+  console.log(`\n✅ Saved ${mappingData.length} mappings to whop_mapping.json`);
 }
 
 syncShopifyToWhop();

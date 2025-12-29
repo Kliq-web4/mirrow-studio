@@ -119,86 +119,100 @@ export const createWhopCheckout = async (items: CartItem[]): Promise<string> => 
   try {
     if (items.length === 0) throw new Error("No items in cart");
 
-    console.log('Starting Whop Checkout...');
-
-    // 1. Prepare items and fetch latest prices to validate
-    // The user requested to "Fetch current prices from Whop" to ensure totals are accurate.
-    // We will do this by fetching the product details.
-    
-    const lineItems = await Promise.all(items.map(async (item) => {
-      const planId = item.whopPlanId;
-      const productHandle = item.product.node.handle; // Assuming handle is ID as per mapWhopToShopify
-      
-      if (!planId) {
-        console.warn(`Item ${item.product.node.title} missing Whop Plan ID`);
-        return null;
-      }
-
-      // Fetch latest product data to verify price (optional but good for validation)
-      // We skip strictly blocking on this unless logical, but we'll log it.
-      try {
-        const product = await fetchWhopProductByHandle(productHandle);
-        if (product) {
-            console.log(`Verified product existence: ${product.title}`);
-            // Logic to update price could go here if we were updating the cart store
-        }
-      } catch (e) {
-        console.warn(`Could not verify product ${productHandle}`, e);
-      }
-
-      return {
-        id: planId, // Passing Plan ID as product ID for checkout session
-        quantity: item.quantity
-      };
-    }));
-
-    const validItems = lineItems.filter(Boolean);
-
-    if (validItems.length === 0) {
-      throw new Error("No valid Whop products found in cart.");
+    const CART_PRODUCT_ID = import.meta.env.VITE_WHOP_CART_PRODUCT_ID;
+    if (!CART_PRODUCT_ID) {
+        throw new Error("Misconfiguration: VITE_WHOP_CART_PRODUCT_ID is missing.");
+    }
+    if (!WHOP_COMPANY_ID) {
+        throw new Error("Misconfiguration: VITE_WHOP_COMPANY_ID is missing.");
     }
 
-    // 2. Create Checkout Session
-    // Using direct fetch because SDK might not expose this specific endpoint or experimental feature
-    console.log('Creating checkout session for:', validItems);
+    console.log('Starting Whop Checkout (Dynamic Bundle Approach)...');
 
-    // Create a mapping of Plan ID -> Shopify Variant ID for the backend to use
+    // 1. Calculate Totals
+    let totalAmount = 0;
+    let currency = 'USD';
+    
+    // Validate items and sum up
+    items.forEach(item => {
+        totalAmount += parseFloat(item.price.amount) * item.quantity;
+        currency = item.price.currencyCode; // Assuming all matches, or take first
+    });
+
     const variantMapping = items.reduce((acc: Record<string, string>, item) => {
-        if (item.whopPlanId) {
-            acc[item.whopPlanId] = item.variantId;
-        }
+        // Since we are creating a single bundle plan, we map the BUNDLE PLAN ID to the list of items?
+        // No, the webhook logic expects "item.plan_id" -> "variant_id".
+        // But here we have 1 plan = multiple variants.
+        // We need to adjust the Webhook Logic or the Metadata structure.
+        // Let's store the CART mapping in metadata: "variant_id: quantity".
+        // And the webhook will read "variant_map_v2" if present?
+        // Let's stick to the current webhook logic if possible, OR upgrade it.
+        // Current webhook: iterates line_items, finds plan_id, looks up variant_id.
+        
+        // If we have 1 line item (the bundle), we need a way to tell the webhook "This bundle contains X, Y, Z".
+        // Metadata is the best place.
         return acc;
     }, {} as Record<string, string>);
+    
+    // We will store the FULL CART CONTENT in metadata to be parsed by the webhook.
+    const cartContent = items.map(item => ({
+        variantId: item.variantId,
+        quantity: item.quantity
+    }));
 
-    const response = await fetch('https://api.whop.com/v1/checkout_sessions', {
+    // 2. Create a Dynamic "Cart Plan"
+    // Use raw fetch for plan creation to ensure specific fields
+    const planTitle = `Checkout - ${new Date().toLocaleTimeString()}`;
+    
+    console.log(`Creating Plan: ${planTitle} for ${totalAmount} ${currency}`);
+
+    const planRes = await whop.plans.create({
+        company_id: WHOP_COMPANY_ID,
+        product_id: CART_PRODUCT_ID,
+        title: planTitle,
+        description: "Custom Cart Checkout",
+        plan_type: 'one_time',
+        initial_price: totalAmount,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        currency: currency.toLowerCase() as any,
+        stock: 1, // One time use plan ideally
+        unlimited_stock: false
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const plan = (planRes as any).data || planRes;
+    const planId = plan.id;
+
+    console.log(`Created Cart Plan: ${planId}`);
+
+    // 3. Create Checkout Session for this Single Plan
+    const response = await fetch('https://api.whop.com/v2/checkouts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${WHOP_API_KEY}`
       },
       body: JSON.stringify({
-        products: validItems,
+        items: [
+            { plan_id: planId, quantity: 1 }
+        ],
         success_url: window.location.origin + '/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: window.location.origin + '/?canceled=true',
         metadata: {
             source: 'mirrow-store',
-            variant_map: JSON.stringify(variantMapping)
+            is_cart_bundle: 'true',
+            cart_content: JSON.stringify(cartContent)
         }
       })
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Whop Checkout Session Error:', errorData);
-        throw new Error(`Whop Checkout Failed: ${errorData.message || response.statusText}`);
+        const errorText = await response.text();
+        console.error('Whop Checkout Session Error:', response.status, errorText);
+        throw new Error(`Whop Checkout Failed: ${response.statusText}`);
     }
 
     const data = await response.json();
-    
-    // Assuming data returns a checkout URL or session object with a url
-    // Example: { id: "sess_...", url: "https://whop.com/checkout/sess_..." }
-    // Adjust based on actual API response structure if known, otherwise assume 'url' or 'checkout_url'
-    
     const checkoutUrl = data.url || data.checkout_url;
     
     if (!checkoutUrl) {
