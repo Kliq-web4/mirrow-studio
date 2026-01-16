@@ -1,10 +1,10 @@
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import CategorySection from "@/components/CategorySection";
 import StorySection from "@/components/StorySection";
 import FeaturesSection from "@/components/FeaturesSection";
 import ProductSection from "@/components/ProductSection";
-import CommunitySection from "@/components/CommunitySection";
 import NewsletterSection from "@/components/NewsletterSection";
 import Footer from "@/components/Footer";
 import TrustSignals from "@/components/TrustSignals";
@@ -15,29 +15,27 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>MIRROW World | Studio-Grade LED Mirror for Creators</title>
+        <title>LUXEMIRRORS | Premium Hollywood, Baroque & Statement Mirrors</title>
         <meta 
           name="description" 
-          content="Step into MIRROW World. Studio-grade LED lighting meets elegant design. Tap-to-change lighting moods, creator-ready phone clip, and 30+ routines per charge." 
+          content="The world's premier mirror destination. Shop Hollywood vanity mirrors, ornate baroque designs, statement pieces & LED mirrors. Free shipping, 5-year warranty." 
         />
-        <meta name="keywords" content="LED mirror, makeup mirror, vanity mirror, ring light, content creator, beauty mirror, MIRROW" />
-        <link rel="canonical" href="https://mirrowworld.com" />
+        <meta name="keywords" content="luxury mirrors, Hollywood mirror, baroque mirror, vanity mirror, LED mirror, statement mirror, ornate mirror, full length mirror" />
+        <link rel="canonical" href="https://luxemirrors.com" />
       </Helmet>
       
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
-        <main>
-          {/* Optimized conversion flow: Hook → Desire → Features → Products → Social Proof → Capture */}
+        <main className="pt-[36px]">
           <HeroSection />
+          <CategorySection />
           <ProductSection />
           <StorySection />
           <FeaturesSection />
-          <CommunitySection />
           <NewsletterSection />
         </main>
         <Footer />
         
-        {/* Conversion Optimization Components */}
         <TrustSignals />
         <ExitIntentPopup />
         <SocialProofNotification />

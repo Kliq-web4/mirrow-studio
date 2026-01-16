@@ -10,14 +10,14 @@ interface PurchaseNotification {
 }
 
 const mockPurchases: PurchaseNotification[] = [
-  { name: "Sarah M.", location: "New York, USA", product: "LED Vanity Mirror", timeAgo: "2 mins ago" },
-  { name: "Emma L.", location: "London, UK", product: "Tabletop Mirror", timeAgo: "5 mins ago" },
-  { name: "Ava K.", location: "Sydney, AU", product: "Hollywood Mirror", timeAgo: "8 mins ago" },
-  { name: "Mia R.", location: "Toronto, CA", product: "Compact LED Mirror", timeAgo: "12 mins ago" },
-  { name: "Olivia J.", location: "Paris, FR", product: "Ring Light Mirror", timeAgo: "15 mins ago" },
-  { name: "Sophia T.", location: "Berlin, DE", product: "Makeup Mirror Pro", timeAgo: "18 mins ago" },
-  { name: "Isabella N.", location: "Tokyo, JP", product: "Travel Mirror", timeAgo: "22 mins ago" },
-  { name: "Charlotte B.", location: "Dubai, UAE", product: "LED Vanity Set", timeAgo: "25 mins ago" },
+  { name: "Sarah M.", location: "New York, USA", product: "Hollywood Vanity Mirror", timeAgo: "2 mins ago" },
+  { name: "Emma L.", location: "London, UK", product: "Baroque Gold Frame Mirror", timeAgo: "5 mins ago" },
+  { name: "Ava K.", location: "Sydney, AU", product: "Full Length LED Mirror", timeAgo: "8 mins ago" },
+  { name: "Mia R.", location: "Toronto, CA", product: "Ornate Statement Mirror", timeAgo: "12 mins ago" },
+  { name: "Olivia J.", location: "Paris, FR", product: "Art Deco Vanity Mirror", timeAgo: "15 mins ago" },
+  { name: "Sophia T.", location: "Berlin, DE", product: "Minimalist Wall Mirror", timeAgo: "18 mins ago" },
+  { name: "Isabella N.", location: "Tokyo, JP", product: "Smart LED Bathroom Mirror", timeAgo: "22 mins ago" },
+  { name: "Charlotte B.", location: "Dubai, UAE", product: "Royal Baroque Mirror Set", timeAgo: "25 mins ago" },
 ];
 
 export const SocialProofNotification = () => {
