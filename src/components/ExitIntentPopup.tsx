@@ -92,17 +92,17 @@ export const ExitIntentPopup = () => {
 
               {/* Headline */}
               <h2 className="font-display text-2xl md:text-3xl text-foreground mb-2">
-                Wait! Don't Miss Out
+                Wait! Your Perfect Mirror Awaits
               </h2>
               
               <p className="text-muted-foreground mb-6">
-                Get <span className="text-primary font-semibold">15% OFF</span> your first order
+                Get <span className="text-primary font-semibold">20% OFF</span> your first luxury mirror
               </p>
 
               {/* Discount code display */}
               <div className="bg-secondary/50 border border-dashed border-primary/50 rounded-lg p-4 mb-6">
                 <p className="text-xs text-muted-foreground mb-1">YOUR EXCLUSIVE CODE</p>
-                <p className="text-2xl font-display text-primary tracking-wider">MIRROW15</p>
+                <p className="text-2xl font-display text-primary tracking-wider">LUXE20</p>
               </div>
 
               {/* Form */}
