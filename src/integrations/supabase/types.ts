@@ -10,792 +10,845 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
-      ad_metrics: {
+      activity_logs: {
         Row: {
-          ad_id: string | null
-          clicks: number | null
-          conversions: number | null
+          action_details: Json | null
+          action_type: string
+          content_preview: string | null
+          content_type: string | null
+          device_info: Json | null
+          error_message: string | null
+          file_size: number | null
+          geolocation: Json | null
+          id: string
+          ip_address: unknown
+          session_id: string | null
+          success: boolean
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_details?: Json | null
+          action_type: string
+          content_preview?: string | null
+          content_type?: string | null
+          device_info?: Json | null
+          error_message?: string | null
+          file_size?: number | null
+          geolocation?: Json | null
+          id?: string
+          ip_address?: unknown
+          session_id?: string | null
+          success?: boolean
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_details?: Json | null
+          action_type?: string
+          content_preview?: string | null
+          content_type?: string | null
+          device_info?: Json | null
+          error_message?: string | null
+          file_size?: number | null
+          geolocation?: Json | null
+          id?: string
+          ip_address?: unknown
+          session_id?: string | null
+          success?: boolean
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "session_join_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_summary: {
+        Row: {
           created_at: string
           date: string
           id: string
-          impressions: number | null
-          org_id: string
-          revenue: number | null
-          spend: number | null
+          metadata: Json | null
+          metric_type: string
+          metric_value: number
+          profile_id: string
+          unique_visitors: number | null
+          updated_at: string
         }
         Insert: {
-          ad_id?: string | null
-          clicks?: number | null
-          conversions?: number | null
           created_at?: string
           date: string
           id?: string
-          impressions?: number | null
-          org_id: string
-          revenue?: number | null
-          spend?: number | null
+          metadata?: Json | null
+          metric_type: string
+          metric_value?: number
+          profile_id: string
+          unique_visitors?: number | null
+          updated_at?: string
         }
         Update: {
-          ad_id?: string | null
-          clicks?: number | null
-          conversions?: number | null
           created_at?: string
           date?: string
           id?: string
-          impressions?: number | null
-          org_id?: string
-          revenue?: number | null
-          spend?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ad_metrics_ad_id_fkey"
-            columns: ["ad_id"]
-            isOneToOne: false
-            referencedRelation: "ads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ad_metrics_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ads: {
-        Row: {
-          ad_id: string | null
-          created_at: string
-          creative_id: string | null
-          id: string
-          name: string | null
-          org_id: string
-          platform: string
-          product_id: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          ad_id?: string | null
-          created_at?: string
-          creative_id?: string | null
-          id?: string
-          name?: string | null
-          org_id: string
-          platform: string
-          product_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          ad_id?: string | null
-          created_at?: string
-          creative_id?: string | null
-          id?: string
-          name?: string | null
-          org_id?: string
-          platform?: string
-          product_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ads_creative_id_fkey"
-            columns: ["creative_id"]
-            isOneToOne: false
-            referencedRelation: "creatives"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ads_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ads_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      consultation_bookings: {
-        Row: {
-          budget: string | null
-          company: string | null
-          created_at: string
-          email: string
-          id: string
-          name: string
-          phone: string | null
-          preferred_date_time: string | null
-          project_description: string
-          service_name: string
-          status: string | null
-          timeline: string | null
-        }
-        Insert: {
-          budget?: string | null
-          company?: string | null
-          created_at?: string
-          email: string
-          id?: string
-          name: string
-          phone?: string | null
-          preferred_date_time?: string | null
-          project_description: string
-          service_name: string
-          status?: string | null
-          timeline?: string | null
-        }
-        Update: {
-          budget?: string | null
-          company?: string | null
-          created_at?: string
-          email?: string
-          id?: string
-          name?: string
-          phone?: string | null
-          preferred_date_time?: string | null
-          project_description?: string
-          service_name?: string
-          status?: string | null
-          timeline?: string | null
-        }
-        Relationships: []
-      }
-      contact_submissions: {
-        Row: {
-          company: string | null
-          created_at: string
-          email: string
-          id: string
-          message: string
-          name: string
-          service_type: string | null
-          status: string | null
-          subject: string
-        }
-        Insert: {
-          company?: string | null
-          created_at?: string
-          email: string
-          id?: string
-          message: string
-          name: string
-          service_type?: string | null
-          status?: string | null
-          subject: string
-        }
-        Update: {
-          company?: string | null
-          created_at?: string
-          email?: string
-          id?: string
-          message?: string
-          name?: string
-          service_type?: string | null
-          status?: string | null
-          subject?: string
-        }
-        Relationships: []
-      }
-      contacts: {
-        Row: {
-          called: boolean | null
-          created_at: string
-          email: string | null
-          emailed: boolean | null
-          id: string
-          name: string
-          phone: string | null
-          social_links: Json | null
-        }
-        Insert: {
-          called?: boolean | null
-          created_at?: string
-          email?: string | null
-          emailed?: boolean | null
-          id?: string
-          name: string
-          phone?: string | null
-          social_links?: Json | null
-        }
-        Update: {
-          called?: boolean | null
-          created_at?: string
-          email?: string | null
-          emailed?: boolean | null
-          id?: string
-          name?: string
-          phone?: string | null
-          social_links?: Json | null
-        }
-        Relationships: []
-      }
-      creatives: {
-        Row: {
-          asset_url: string | null
-          created_at: string
-          hook: string | null
-          id: string
-          org_id: string
-          product_id: string | null
-          script: string | null
-          status: string | null
-          type: string | null
-          updated_at: string
-        }
-        Insert: {
-          asset_url?: string | null
-          created_at?: string
-          hook?: string | null
-          id?: string
-          org_id: string
-          product_id?: string | null
-          script?: string | null
-          status?: string | null
-          type?: string | null
-          updated_at?: string
-        }
-        Update: {
-          asset_url?: string | null
-          created_at?: string
-          hook?: string | null
-          id?: string
-          org_id?: string
-          product_id?: string | null
-          script?: string | null
-          status?: string | null
-          type?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "creatives_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "creatives_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      customers: {
-        Row: {
-          address: Json | null
-          created_at: string
-          email: string
-          id: string
-          name: string | null
-          org_id: string
-          phone: string | null
-          total_orders: number | null
-          total_spent: number | null
-          updated_at: string
-        }
-        Insert: {
-          address?: Json | null
-          created_at?: string
-          email: string
-          id?: string
-          name?: string | null
-          org_id: string
-          phone?: string | null
-          total_orders?: number | null
-          total_spent?: number | null
-          updated_at?: string
-        }
-        Update: {
-          address?: Json | null
-          created_at?: string
-          email?: string
-          id?: string
-          name?: string | null
-          org_id?: string
-          phone?: string | null
-          total_orders?: number | null
-          total_spent?: number | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "customers_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      deals: {
-        Row: {
-          actual_close_date: string | null
-          agreed_price: number | null
-          asking_price: number | null
-          commission_amount: number | null
-          commission_rate: number | null
-          created_at: string
-          deal_type: string | null
-          expected_close_date: string | null
-          id: string
-          lead_id: string | null
-          notes: string | null
-          property_id: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          actual_close_date?: string | null
-          agreed_price?: number | null
-          asking_price?: number | null
-          commission_amount?: number | null
-          commission_rate?: number | null
-          created_at?: string
-          deal_type?: string | null
-          expected_close_date?: string | null
-          id?: string
-          lead_id?: string | null
-          notes?: string | null
-          property_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          actual_close_date?: string | null
-          agreed_price?: number | null
-          asking_price?: number | null
-          commission_amount?: number | null
-          commission_rate?: number | null
-          created_at?: string
-          deal_type?: string | null
-          expected_close_date?: string | null
-          id?: string
-          lead_id?: string | null
-          notes?: string | null
-          property_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "deals_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deals_property_id_fkey"
-            columns: ["property_id"]
-            isOneToOne: false
-            referencedRelation: "properties"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      experiments: {
-        Row: {
-          conversions: number | null
-          created_at: string
-          headline: string | null
-          hero_image_url: string | null
-          id: string
-          impressions: number | null
-          metadata: Json | null
-          org_id: string
-          page_url: string | null
-          product_id: string | null
-          status: string | null
-          updated_at: string
-          variant_label: string | null
-        }
-        Insert: {
-          conversions?: number | null
-          created_at?: string
-          headline?: string | null
-          hero_image_url?: string | null
-          id?: string
-          impressions?: number | null
           metadata?: Json | null
-          org_id: string
-          page_url?: string | null
-          product_id?: string | null
-          status?: string | null
-          updated_at?: string
-          variant_label?: string | null
-        }
-        Update: {
-          conversions?: number | null
-          created_at?: string
-          headline?: string | null
-          hero_image_url?: string | null
-          id?: string
-          impressions?: number | null
-          metadata?: Json | null
-          org_id?: string
-          page_url?: string | null
-          product_id?: string | null
-          status?: string | null
-          updated_at?: string
-          variant_label?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "experiments_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "experiments_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      leads: {
-        Row: {
-          bedrooms_max: number | null
-          bedrooms_min: number | null
-          budget_max: number | null
-          budget_min: number | null
-          created_at: string
-          email: string | null
-          id: string
-          last_contacted_at: string | null
-          name: string
-          notes: string | null
-          phone: string | null
-          preferred_areas: Json | null
-          property_interest: string | null
-          source: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          bedrooms_max?: number | null
-          bedrooms_min?: number | null
-          budget_max?: number | null
-          budget_min?: number | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          last_contacted_at?: string | null
-          name: string
-          notes?: string | null
-          phone?: string | null
-          preferred_areas?: Json | null
-          property_interest?: string | null
-          source?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          bedrooms_max?: number | null
-          bedrooms_min?: number | null
-          budget_max?: number | null
-          budget_min?: number | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          last_contacted_at?: string | null
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          preferred_areas?: Json | null
-          property_interest?: string | null
-          source?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      newsletter_subscribers: {
-        Row: {
-          email: string
-          id: string
-          is_active: boolean | null
-          subscribed_at: string
-          unsubscribed_at: string | null
-        }
-        Insert: {
-          email: string
-          id?: string
-          is_active?: boolean | null
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-        }
-        Update: {
-          email?: string
-          id?: string
-          is_active?: boolean | null
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-        }
-        Relationships: []
-      }
-      orders: {
-        Row: {
-          created_at: string
-          customer_id: string | null
-          id: string
-          order_number: string
-          org_id: string
-          product_id: string | null
-          profit: number | null
-          revenue: number | null
-          status: string | null
-          total: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          customer_id?: string | null
-          id?: string
-          order_number: string
-          org_id: string
-          product_id?: string | null
-          profit?: number | null
-          revenue?: number | null
-          status?: string | null
-          total?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          customer_id?: string | null
-          id?: string
-          order_number?: string
-          org_id?: string
-          product_id?: string | null
-          profit?: number | null
-          revenue?: number | null
-          status?: string | null
-          total?: number
+          metric_type?: string
+          metric_value?: number
+          profile_id?: string
+          unique_visitors?: number | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "orders_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "analytics_summary_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      orgs: {
+      anonymous_user_ips: {
         Row: {
-          created_at: string
+          action_type: string | null
+          captured_at: string
           id: string
-          name: string
-          updated_at: string
+          ip_address: unknown
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
         }
         Insert: {
-          created_at?: string
+          action_type?: string | null
+          captured_at?: string
           id?: string
-          name: string
-          updated_at?: string
+          ip_address: unknown
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Update: {
-          created_at?: string
+          action_type?: string | null
+          captured_at?: string
           id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      partnership_inquiries: {
-        Row: {
-          budget_range: string | null
-          company_name: string
-          company_size: string | null
-          contact_name: string
-          created_at: string
-          email: string
-          id: string
-          industry: string | null
-          message: string
-          partnership_type: string
-          phone: string | null
-          status: string | null
-          timeline: string | null
-          website: string | null
-        }
-        Insert: {
-          budget_range?: string | null
-          company_name: string
-          company_size?: string | null
-          contact_name: string
-          created_at?: string
-          email: string
-          id?: string
-          industry?: string | null
-          message: string
-          partnership_type: string
-          phone?: string | null
-          status?: string | null
-          timeline?: string | null
-          website?: string | null
-        }
-        Update: {
-          budget_range?: string | null
-          company_name?: string
-          company_size?: string | null
-          contact_name?: string
-          created_at?: string
-          email?: string
-          id?: string
-          industry?: string | null
-          message?: string
-          partnership_type?: string
-          phone?: string | null
-          status?: string | null
-          timeline?: string | null
-          website?: string | null
-        }
-        Relationships: []
-      }
-      product_sources: {
-        Row: {
-          created_at: string
-          id: string
-          org_id: string
-          platform: string
-          product_id: string
-          query: string | null
-          url: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          org_id: string
-          platform: string
-          product_id: string
-          query?: string | null
-          url?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          org_id?: string
-          platform?: string
-          product_id?: string
-          query?: string | null
-          url?: string | null
+          ip_address?: unknown
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "product_sources_org_id_fkey"
-            columns: ["org_id"]
+            foreignKeyName: "anonymous_user_ips_session_id_fkey"
+            columns: ["session_id"]
             isOneToOne: false
-            referencedRelation: "orgs"
+            referencedRelation: "session_join_info"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "product_sources_product_id_fkey"
-            columns: ["product_id"]
+            foreignKeyName: "anonymous_user_ips_session_id_fkey"
+            columns: ["session_id"]
             isOneToOne: false
-            referencedRelation: "products"
+            referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
         ]
       }
-      products: {
+      categories: {
         Row: {
+          color: string | null
           created_at: string
           description: string | null
           id: string
-          image_url: string | null
+          name: string
+          order_index: number
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          order_index?: number
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          order_index?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      clipboard_items: {
+        Row: {
+          content: string
+          created_at: string
+          device_name: string | null
+          encrypted: boolean
+          file_name: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          session_id: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          device_name?: string | null
+          encrypted?: boolean
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          session_id: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          device_name?: string | null
+          encrypted?: boolean
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          session_id?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clipboard_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "session_join_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clipboard_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_blocks: {
+        Row: {
+          category_id: string | null
+          content: Json
+          created_at: string
+          id: string
+          is_visible: boolean
+          order_index: number
+          settings: Json
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          content?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          order_index?: number
+          settings?: Json
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string | null
+          content?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          order_index?: number
+          settings?: Json
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_blocks_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_interactions: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string
+          id: string
+          interaction_type: string
+          ip_address: unknown
+          metadata: Json | null
+          profile_id: string
+          referrer: string | null
+          user_agent: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string
+          id?: string
+          interaction_type: string
+          ip_address?: unknown
+          metadata?: Json | null
+          profile_id: string
+          referrer?: string | null
+          user_agent?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          profile_id?: string
+          referrer?: string | null
+          user_agent?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_interactions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          description: string | null
+          id: string
+          request_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          request_id?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          request_id?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_rsvps: {
+        Row: {
+          created_at: string
+          email: string
+          event_id: string
+          id: string
+          name: string
           notes: string | null
-          org_id: string
-          price_cost: number | null
-          price_sale: number | null
-          shipping_cost_guess: number | null
-          shipping_days: number | null
-          source_url: string | null
-          status: string | null
-          supplier_url: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_id: string
+          id?: string
+          name: string
+          notes?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_id?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          event_url: string | null
+          id: string
+          is_visible: boolean
+          location: string | null
+          max_attendees: number | null
+          settings: Json | null
+          start_date: string
           title: string
           updated_at: string
-          viral_score: number | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           description?: string | null
+          end_date?: string | null
+          event_url?: string | null
           id?: string
-          image_url?: string | null
-          notes?: string | null
-          org_id: string
-          price_cost?: number | null
-          price_sale?: number | null
-          shipping_cost_guess?: number | null
-          shipping_days?: number | null
-          source_url?: string | null
-          status?: string | null
-          supplier_url?: string | null
+          is_visible?: boolean
+          location?: string | null
+          max_attendees?: number | null
+          settings?: Json | null
+          start_date: string
           title: string
           updated_at?: string
-          viral_score?: number | null
+          user_id: string
         }
         Update: {
           created_at?: string
           description?: string | null
+          end_date?: string | null
+          event_url?: string | null
           id?: string
-          image_url?: string | null
-          notes?: string | null
-          org_id?: string
-          price_cost?: number | null
-          price_sale?: number | null
-          shipping_cost_guess?: number | null
-          shipping_days?: number | null
-          source_url?: string | null
-          status?: string | null
-          supplier_url?: string | null
+          is_visible?: boolean
+          location?: string | null
+          max_attendees?: number | null
+          settings?: Json | null
+          start_date?: string
           title?: string
           updated_at?: string
-          viral_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      form_submissions: {
+        Row: {
+          data: Json
+          form_id: string
+          id: string
+          ip_address: unknown
+          submitted_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          data: Json
+          form_id: string
+          id?: string
+          ip_address?: unknown
+          submitted_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          data?: Json
+          form_id?: string
+          id?: string
+          ip_address?: unknown
+          submitted_at?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "products_org_id_fkey"
-            columns: ["org_id"]
+            foreignKeyName: "form_submissions_form_id_fkey"
+            columns: ["form_id"]
             isOneToOne: false
-            referencedRelation: "orgs"
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forms: {
+        Row: {
+          created_at: string
+          description: string | null
+          fields: Json
+          id: string
+          is_active: boolean
+          settings: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          fields?: Json
+          id?: string
+          is_active?: boolean
+          settings?: Json
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          fields?: Json
+          id?: string
+          is_active?: boolean
+          settings?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      link_clicks: {
+        Row: {
+          clicked_at: string | null
+          id: string
+          ip_address: unknown
+          link_id: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          clicked_at?: string | null
+          id?: string
+          ip_address?: unknown
+          link_id: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          clicked_at?: string | null
+          id?: string
+          ip_address?: unknown
+          link_id?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "link_clicks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      links: {
+        Row: {
+          category_id: string | null
+          created_at: string | null
+          description: string | null
+          gradient: string | null
+          icon: string | null
+          id: string
+          is_visible: boolean | null
+          order_index: number
+          title: string
+          updated_at: string | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          gradient?: string | null
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          order_index?: number
+          title: string
+          updated_at?: string | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          gradient?: string | null
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          order_index?: number
+          title?: string
+          updated_at?: string | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "links_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "links_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loop_profiles: {
+        Row: {
+          availability: Json | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          id: string
+          location: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          availability?: Json | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          id?: string
+          location?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          availability?: Json | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          location?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loop_services: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          is_active: boolean
+          provider_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          provider_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          provider_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loop_services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loop_services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "loop_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_library: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id: string
+          metadata: Json | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          updated_at: string
+          usage_count: number | null
+          user_id: string
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id?: string
+          metadata?: Json | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          user_id: string
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          id?: string
+          metadata?: Json | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profile_views: {
+        Row: {
+          browser: string | null
+          city: string | null
+          country: string | null
+          device_type: string | null
+          id: string
+          ip_address: unknown
+          profile_id: string
+          referrer: string | null
+          user_agent: string | null
+          visited_at: string
+          visitor_id: string | null
+        }
+        Insert: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: unknown
+          profile_id: string
+          referrer?: string | null
+          user_agent?: string | null
+          visited_at?: string
+          visitor_id?: string | null
+        }
+        Update: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: unknown
+          profile_id?: string
+          referrer?: string | null
+          user_agent?: string | null
+          visited_at?: string
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_views_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -803,335 +856,619 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
-          created_at: string
-          display_name: string | null
-          email: string | null
+          bio: string | null
+          business_category:
+            | Database["public"]["Enums"]["business_category"]
+            | null
+          business_keywords: string[] | null
+          business_name: string | null
+          created_at: string | null
           id: string
-          org_id: string | null
-          updated_at: string
+          is_public: boolean | null
+          logo_url: string | null
+          name: string
+          onboarding_completed: boolean | null
+          selected_template: string | null
+          stripe_customer_id: string | null
+          subscription_end_date: string | null
+          subscription_id: string | null
+          subscription_status: string
+          subscription_tier: string
+          theme_color: string | null
+          updated_at: string | null
+          username: string
         }
         Insert: {
           avatar_url?: string | null
-          created_at?: string
-          display_name?: string | null
-          email?: string | null
+          bio?: string | null
+          business_category?:
+            | Database["public"]["Enums"]["business_category"]
+            | null
+          business_keywords?: string[] | null
+          business_name?: string | null
+          created_at?: string | null
           id: string
-          org_id?: string | null
-          updated_at?: string
+          is_public?: boolean | null
+          logo_url?: string | null
+          name: string
+          onboarding_completed?: boolean | null
+          selected_template?: string | null
+          stripe_customer_id?: string | null
+          subscription_end_date?: string | null
+          subscription_id?: string | null
+          subscription_status?: string
+          subscription_tier?: string
+          theme_color?: string | null
+          updated_at?: string | null
+          username: string
         }
         Update: {
           avatar_url?: string | null
-          created_at?: string
-          display_name?: string | null
-          email?: string | null
+          bio?: string | null
+          business_category?:
+            | Database["public"]["Enums"]["business_category"]
+            | null
+          business_keywords?: string[] | null
+          business_name?: string | null
+          created_at?: string | null
           id?: string
-          org_id?: string | null
+          is_public?: boolean | null
+          logo_url?: string | null
+          name?: string
+          onboarding_completed?: boolean | null
+          selected_template?: string | null
+          stripe_customer_id?: string | null
+          subscription_end_date?: string | null
+          subscription_id?: string | null
+          subscription_status?: string
+          subscription_tier?: string
+          theme_color?: string | null
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      service_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      service_requests: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          credits_amount: number
+          id: string
+          message: string | null
+          proposed_date: string | null
+          provider_id: string
+          requested_at: string
+          requester_id: string
+          responded_at: string | null
+          service_id: string
+          status: Database["public"]["Enums"]["request_status"]
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          credits_amount: number
+          id?: string
+          message?: string | null
+          proposed_date?: string | null
+          provider_id: string
+          requested_at?: string
+          requester_id: string
+          responded_at?: string | null
+          service_id: string
+          status?: Database["public"]["Enums"]["request_status"]
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          credits_amount?: number
+          id?: string
+          message?: string | null
+          proposed_date?: string | null
+          provider_id?: string
+          requested_at?: string
+          requester_id?: string
+          responded_at?: string | null
+          service_id?: string
+          status?: Database["public"]["Enums"]["request_status"]
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_org_id_fkey"
-            columns: ["org_id"]
+            foreignKeyName: "service_requests_provider_id_fkey"
+            columns: ["provider_id"]
             isOneToOne: false
-            referencedRelation: "orgs"
+            referencedRelation: "loop_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "loop_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "loop_services"
             referencedColumns: ["id"]
           },
         ]
       }
-      properties: {
+      service_reviews: {
         Row: {
-          agency_name: string | null
-          agent_email: string | null
-          agent_name: string | null
-          agent_phone: string | null
-          amenities: Json | null
-          area: string | null
-          bathrooms: number | null
-          bedrooms: number | null
-          building_name: string | null
-          completion_status: string | null
-          created_at: string
-          currency: string | null
-          description: string | null
-          developer: string | null
-          external_id: string | null
-          furnished: string | null
-          handover_date: string | null
-          id: string
-          images: Json | null
-          location: string | null
-          metadata: Json | null
-          permit_number: string | null
-          price: number | null
-          price_period: string | null
-          property_type: string | null
-          purpose: string | null
-          rera_number: string | null
-          scraped_at: string | null
-          size_sqft: number | null
-          source: string
-          title: string
-          updated_at: string
-          url: string | null
-        }
-        Insert: {
-          agency_name?: string | null
-          agent_email?: string | null
-          agent_name?: string | null
-          agent_phone?: string | null
-          amenities?: Json | null
-          area?: string | null
-          bathrooms?: number | null
-          bedrooms?: number | null
-          building_name?: string | null
-          completion_status?: string | null
-          created_at?: string
-          currency?: string | null
-          description?: string | null
-          developer?: string | null
-          external_id?: string | null
-          furnished?: string | null
-          handover_date?: string | null
-          id?: string
-          images?: Json | null
-          location?: string | null
-          metadata?: Json | null
-          permit_number?: string | null
-          price?: number | null
-          price_period?: string | null
-          property_type?: string | null
-          purpose?: string | null
-          rera_number?: string | null
-          scraped_at?: string | null
-          size_sqft?: number | null
-          source: string
-          title: string
-          updated_at?: string
-          url?: string | null
-        }
-        Update: {
-          agency_name?: string | null
-          agent_email?: string | null
-          agent_name?: string | null
-          agent_phone?: string | null
-          amenities?: Json | null
-          area?: string | null
-          bathrooms?: number | null
-          bedrooms?: number | null
-          building_name?: string | null
-          completion_status?: string | null
-          created_at?: string
-          currency?: string | null
-          description?: string | null
-          developer?: string | null
-          external_id?: string | null
-          furnished?: string | null
-          handover_date?: string | null
-          id?: string
-          images?: Json | null
-          location?: string | null
-          metadata?: Json | null
-          permit_number?: string | null
-          price?: number | null
-          price_period?: string | null
-          property_type?: string | null
-          purpose?: string | null
-          rera_number?: string | null
-          scraped_at?: string | null
-          size_sqft?: number | null
-          source?: string
-          title?: string
-          updated_at?: string
-          url?: string | null
-        }
-        Relationships: []
-      }
-      saved_searches: {
-        Row: {
-          created_at: string
-          filters: Json | null
-          id: string
-          is_active: boolean | null
-          last_run_at: string | null
-          name: string
-          query: string
-          source: string | null
-        }
-        Insert: {
-          created_at?: string
-          filters?: Json | null
-          id?: string
-          is_active?: boolean | null
-          last_run_at?: string | null
-          name: string
-          query: string
-          source?: string | null
-        }
-        Update: {
-          created_at?: string
-          filters?: Json | null
-          id?: string
-          is_active?: boolean | null
-          last_run_at?: string | null
-          name?: string
-          query?: string
-          source?: string | null
-        }
-        Relationships: []
-      }
-      scrape_jobs: {
-        Row: {
-          completed_at: string | null
-          created_at: string
-          error_message: string | null
-          id: string
-          query: string | null
-          results_count: number | null
-          source: string
-          started_at: string | null
-          status: string | null
-          url: string | null
-        }
-        Insert: {
-          completed_at?: string | null
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          query?: string | null
-          results_count?: number | null
-          source: string
-          started_at?: string | null
-          status?: string | null
-          url?: string | null
-        }
-        Update: {
-          completed_at?: string | null
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          query?: string | null
-          results_count?: number | null
-          source?: string
-          started_at?: string | null
-          status?: string | null
-          url?: string | null
-        }
-        Relationships: []
-      }
-      settings: {
-        Row: {
-          ads_metrics_sync_url: string | null
+          comment: string | null
           created_at: string
           id: string
-          kliq_video_hook_url: string | null
-          org_id: string
-          render_creative_url: string | null
-          scout_scan_url: string | null
-          updated_at: string
-          worker_base_url: string | null
+          rating: number
+          request_id: string
+          reviewee_id: string
+          reviewer_id: string
         }
         Insert: {
-          ads_metrics_sync_url?: string | null
+          comment?: string | null
           created_at?: string
           id?: string
-          kliq_video_hook_url?: string | null
-          org_id: string
-          render_creative_url?: string | null
-          scout_scan_url?: string | null
-          updated_at?: string
-          worker_base_url?: string | null
+          rating: number
+          request_id: string
+          reviewee_id: string
+          reviewer_id: string
         }
         Update: {
-          ads_metrics_sync_url?: string | null
+          comment?: string | null
           created_at?: string
           id?: string
-          kliq_video_hook_url?: string | null
-          org_id?: string
-          render_creative_url?: string | null
-          scout_scan_url?: string | null
-          updated_at?: string
-          worker_base_url?: string | null
+          rating?: number
+          request_id?: string
+          reviewee_id?: string
+          reviewer_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "settings_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: true
-            referencedRelation: "orgs"
+            foreignKeyName: "service_reviews_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "loop_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "loop_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_devices: {
+        Row: {
+          created_at: string
+          device_id: string
+          device_name: string
+          device_type: string
+          id: string
+          last_seen: string
+          session_id: string
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          device_name: string
+          device_type: string
+          id?: string
+          last_seen?: string
+          session_id: string
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          device_name?: string
+          device_type?: string
+          id?: string
+          last_seen?: string
+          session_id?: string
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_devices_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "session_join_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_devices_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          allowed_file_types: string[]
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          is_locked: boolean
+          is_private: boolean
+          max_file_size: number
+          owner_id: string | null
+          password_hash: string | null
+          session_code: string
+          session_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          allowed_file_types?: string[]
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          is_locked?: boolean
+          is_private?: boolean
+          max_file_size?: number
+          owner_id?: string | null
+          password_hash?: string | null
+          session_code: string
+          session_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          allowed_file_types?: string[]
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          is_locked?: boolean
+          is_private?: boolean
+          max_file_size?: number
+          owner_id?: string | null
+          password_hash?: string | null
+          session_code?: string
+          session_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      social_links: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          platform: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          platform: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          platform?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_links_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      table_name: {
+        Row: {
+          data: Json | null
+          id: number
+          inserted_at: string
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          data?: Json | null
+          id?: number
+          inserted_at?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          data?: Json | null
+          id?: number
+          inserted_at?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_premium: boolean | null
+          layout_config: Json | null
+          name: string
+          preview_image_url: string | null
+          theme_colors: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id: string
+          is_premium?: boolean | null
+          layout_config?: Json | null
+          name: string
+          preview_image_url?: string | null
+          theme_colors?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_premium?: boolean | null
+          layout_config?: Json | null
+          name?: string
+          preview_image_url?: string | null
+          theme_colors?: Json | null
+        }
+        Relationships: []
+      }
+      time_credits: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          total_earned: number
+          total_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_tracking: {
+        Row: {
+          bandwidth_used: number
+          created_at: string
+          file_size_used: number
+          files_uploaded: number
+          id: string
+          session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bandwidth_used?: number
+          created_at?: string
+          file_size_used?: number
+          files_uploaded?: number
+          id?: string
+          session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bandwidth_used?: number
+          created_at?: string
+          file_size_used?: number
+          files_uploaded?: number
+          id?: string
+          session_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_tracking_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "session_join_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_tracking_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
         ]
       }
       user_roles: {
         Row: {
+          created_at: string
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
+          created_at?: string
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          role?: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
+          created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
       }
-      workflows: {
-        Row: {
-          config: Json | null
-          created_at: string
-          description: string | null
-          id: string
-          last_run_at: string | null
-          name: string
-          org_id: string
-          status: string | null
-          type: string | null
-          updated_at: string
-        }
-        Insert: {
-          config?: Json | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          last_run_at?: string | null
-          name: string
-          org_id: string
-          status?: string | null
-          type?: string | null
-          updated_at?: string
-        }
-        Update: {
-          config?: Json | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          last_run_at?: string | null
-          name?: string
-          org_id?: string
-          status?: string | null
-          type?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "workflows_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "orgs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
-      [_ in never]: never
+      session_join_info: {
+        Row: {
+          allowed_file_types: string[] | null
+          created_at: string | null
+          expires_at: string | null
+          has_password: boolean | null
+          id: string | null
+          is_locked: boolean | null
+          is_private: boolean | null
+          max_file_size: number | null
+          session_code: string | null
+          session_name: string | null
+        }
+        Insert: {
+          allowed_file_types?: string[] | null
+          created_at?: string | null
+          expires_at?: string | null
+          has_password?: never
+          id?: string | null
+          is_locked?: boolean | null
+          is_private?: boolean | null
+          max_file_size?: number | null
+          session_code?: string | null
+          session_name?: string | null
+        }
+        Update: {
+          allowed_file_types?: string[] | null
+          created_at?: string | null
+          expires_at?: string | null
+          has_password?: never
+          id?: string | null
+          is_locked?: boolean | null
+          is_private?: boolean | null
+          max_file_size?: number | null
+          session_code?: string | null
+          session_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      check_session_ownership: {
+        Args: { session_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
+      check_username_availability: {
+        Args: { username_to_check: string }
+        Returns: boolean
+      }
+      cleanup_stale_devices: { Args: never; Returns: undefined }
+      get_analytics_overview: {
+        Args: { user_id: string }
+        Returns: {
+          daily_views: Json
+          top_referrers: Json
+          total_content_views: number
+          total_link_clicks: number
+          total_profile_views: number
+          unique_visitors: number
+        }[]
+      }
+      get_my_loop_profile_id: { Args: never; Returns: string }
+      get_public_session_info: {
+        Args: { session_code_param: string }
+        Returns: {
+          is_expired: boolean
+          requires_password: boolean
+          session_exists: boolean
+          session_name: string
+        }[]
+      }
+      get_storage_usage: {
+        Args: { user_uuid?: string }
+        Returns: {
+          bucket_name: string
+          total_files: number
+          total_size: number
+        }[]
+      }
+      get_user_by_username: {
+        Args: { username_param: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          id: string
+          is_public: boolean
+          name: string
+          theme_color: string
+          username: string
+        }[]
+      }
+      get_user_limits:
+        | { Args: never; Returns: undefined }
+        | {
+            Args: { user_uuid: string }
+            Returns: {
+              allowed_file_types: string[]
+              max_file_size: number
+              max_session_duration: unknown
+              max_sessions: number
+              priority_sync: boolean
+            }[]
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1139,10 +1476,54 @@ export type Database = {
         }
         Returns: boolean
       }
-      org_id_for_user: { Args: never; Returns: string }
+      is_admin: { Args: never; Returns: boolean }
+      is_request_involved: { Args: { _request_id: string }; Returns: boolean }
+      is_service_owner: { Args: { _service_id: string }; Returns: boolean }
+      log_user_activity: {
+        Args: {
+          p_action_details?: Json
+          p_action_type: string
+          p_content_preview?: string
+          p_content_type?: string
+          p_error_message?: string
+          p_file_size?: number
+          p_session_id?: string
+          p_success?: boolean
+        }
+        Returns: string
+      }
+      mark_inactive_devices_offline: { Args: never; Returns: undefined }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "member"
+      business_category:
+        | "business"
+        | "creator"
+        | "artist"
+        | "musician"
+        | "photographer"
+        | "blogger"
+        | "entrepreneur"
+        | "freelancer"
+        | "nonprofit"
+        | "restaurant"
+        | "fitness"
+        | "education"
+        | "technology"
+        | "fashion"
+        | "travel"
+        | "food"
+        | "health"
+        | "finance"
+        | "real_estate"
+        | "automotive"
+        | "other"
+      request_status:
+        | "pending"
+        | "accepted"
+        | "declined"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1270,7 +1651,37 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "member"],
+      business_category: [
+        "business",
+        "creator",
+        "artist",
+        "musician",
+        "photographer",
+        "blogger",
+        "entrepreneur",
+        "freelancer",
+        "nonprofit",
+        "restaurant",
+        "fitness",
+        "education",
+        "technology",
+        "fashion",
+        "travel",
+        "food",
+        "health",
+        "finance",
+        "real_estate",
+        "automotive",
+        "other",
+      ],
+      request_status: [
+        "pending",
+        "accepted",
+        "declined",
+        "completed",
+        "cancelled",
+      ],
     },
   },
 } as const
